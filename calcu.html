@@ -1,0 +1,127 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="calcu.css">
+
+</head>
+<body>
+  <div class="calculator" id="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons" id="buttons">
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="appendValue('/')">/</button>
+      <button onclick="appendValue('*')">*</button>
+      <button onclick="deleteLast()">DEL</button>
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button onclick="appendValue('-')">-</button>
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button onclick="appendValue('+')">+</button>
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button onclick="calculateResult()" class="eq">=</button>
+      <button onclick="change()">H</button>
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>   
+    </div>
+  </div>
+</body>
+<script>
+let displayValue = "";
+let history = []
+let t = true
+let cal = document.getElementById('buttons').innerHTML
+
+function his(a){
+  change()
+  displayValue = a.split(' = ')[0]
+  updateDisplay();
+}
+
+function cle(){
+  history = []
+  t = true
+  change()
+}
+
+function change(){
+  document.getElementById('buttons').innerHTML = ''
+  displayValue = 0
+  updateDisplay();
+
+  if(t){
+    document.getElementById('buttons').style.overflowY = 'scroll'
+    document.getElementById('buttons').innerHTML += '<button onclick="change()" class="history2">Go Back</button> <button onclick="cle()" class="history2" style="color:blue;">Clear all</button>'
+    for (i in history){
+      document.getElementById('buttons').innerHTML += '<button onclick="his(innerHTML)"  class="history" >'+history[i]+' = '+eval(history[i])+'</button>'
+    }
+    t = false 
+  }
+
+  else{
+    document.getElementById('buttons').style.overflowY = 'hidden'
+    document.getElementById('buttons').innerHTML = cal
+    t = true
+  }
+
+}
+function appendValue(value) {
+  if (displayValue === "0" && value !== ".") {
+    displayValue = value;
+  } else {
+    displayValue += value;
+  }
+  updateDisplay();
+}
+
+function clearDisplay() {
+  displayValue = "";
+  updateDisplay();
+}
+
+function deleteLast() {
+  displayValue = displayValue.slice(0, -1);
+  updateDisplay();
+}
+
+function calculateResult() {
+  try {
+    Value = eval(displayValue).toString();
+    history.push(displayValue)
+    displayValue = Value
+    document.getElementById('display').innerHTML += '=<br>'+'<s>'+displayValue+'</s>'
+  } catch {
+    document.getElementById('display').innerHTML ='Error'
+    setTimeout(function(){document.getElementById('display').innerHTML ='0'},1500)
+    displayValue = ''
+  }
+  
+}
+document.addEventListener("keydown", function(event){
+            if (event.key.toUpperCase() == 'BACKSPACE'){
+              deleteLast()
+            }
+            if (event.key.toUpperCase() == 'ENTER'){
+              calculateResult()
+            }
+            if (!isNaN(event.key) || ['+','-','/','.','='].includes(event.key) ) {
+                appendValue(event.key)
+            }
+        })
+
+function updateDisplay() {
+  const display = document.getElementById("display");
+  display.textContent = displayValue || "0";
+
+}
+</script>
+</html>
+    
